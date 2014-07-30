@@ -73,15 +73,16 @@
 ;; Look & Feel
 ;;----------------------------------------------------------
 
-;; 行番号・列番号を表示
-(line-number-mode t)
-(column-number-mode t)
-
 ;; 時間を表示
 (display-time)
 
-;; スクロールバーを右に配置
-;(set-scroll-bar-mode 'right)
+;; 行番号・列番号を表示
+(line-number-mode 1)
+(column-number-mode 1)
+(linum-mode -1)
+
+;; スクロールバーを非表示
+(scroll-bar-mode -1)
 
 ;; 対応する括弧を強調表示
 (setq show-paren-delay 0) ;; 0秒(遅延なし)で表示
@@ -93,46 +94,51 @@
 ;; 長い行は折り返す
 (setq truncate-lines t)
 
-;; 行間を指定
-(setq-default line-spacing 2)
+(if window-system
+	(progn
+	  ;; メニューバーを表示
+	  (menu-bar-mode 1)
+	  ;; ツールバーを非表示
+	  (tool-bar-mode -1)
+	  ;; 行間を指定
+	  (setq-default line-spacing 0)
+	  ;; タイトル
+	  (setq frame-title-format (concat "%b"))
+	  (setq default-frame-alist
+			'(
+			  ;; ウィジェットのサイズ
+			  (width . 108)
+			  (height . 48)
+			  ))
+	  ;; フォント
+	  ;; (pp (font-family-list)) でfont-familyの出力可能
+	  (set-face-attribute 'default nil
+						  :height 125
+						  :family "Consolas"
+;						  :family "Menlo"
+;						  :family "Dejavu Sans Mono"
+;						  :family "The Sans Mono Condensed-"
+						  )
+	  (set-fontset-font nil 'japanese-jisx0208
+						(font-spec :family "Noto Sans Japanese"))
+;						(font-spec :family "Hiragino Kaku Gothic Pro"))
 
-(when window-system
-  ;; メニューバーを非表示
-  (menu-bar-mode -1)
-  ;; タイトル
-  (setq frame-title-format (concat "%b"))
-  (setq default-frame-alist
-	    '(
-	      ;; ウィジェットのサイズ
-;	      (width . 80)
-;	      (height . 52)
-	      ))
-  ;; フォント
-  ;; (prin1 (font-family-list)) でfont-familyの出力可能
-  (set-face-attribute 'default nil
-					  :height 120
-;					  :family "Monaco"
-					  :family "Meslo LG M DZ"
-					  )
-  (set-fontset-font nil 'japanese-jisx0208
-					(font-spec
-					 :family "Hiragino Kaku Gothic ProN"))
-  (setq face-font-rescale-alist
-		'(("^-apple-hiragino.*" . 1.0)
-		  (".*osaka-bold.*" . 1.0)
-		  (".*osaka-medium.*" . 1.0)
-		  (".*courier-bold-.*-mac-roman" . 1.0)
-		  (".*monaco cy-bold-.*-mac-cyrillic" . 0.9)
-		  (".*monaco-bold-.*-mac-roman" . 0.9)
-		  ("-cdac$" . 1.3)))
+	  ;; theme
+	  (load-theme 'dichromacy t)
+;	  (load-theme 'deeper-blue t)
+	)
+    (progn
+	  ;; メニューバーを非表示
+	  (menu-bar-mode -1)
+	)
 )
 
 ;; color-theme
 ;; M-x package-list-packages RET color-theme
-(when (locate-library "color-theme")
-  (color-theme-initialize)
-  (color-theme-midnight)
-)
+;(when (locate-library "color-theme")
+;  (color-theme-initialize)
+;  (color-theme-midnight)
+;)
 
 ;;----------------------------------------------------------
 ;; input method
@@ -282,7 +288,9 @@
 (when (require 'auto-complete-config nil t)
   (add-to-list 'ac-modes 'js2-mode)
   (add-to-list 'ac-modes 'web-mode)
-  (ac-config-default) ;elisp,c,ruby,cssの各モードにhook
+  (add-to-list 'ac-modes 'enh-ruby-mode)
+  (add-to-list 'ac-modes 'markdown-mode)
+  (ac-config-default)
   (setq ac-auto-start 4)
   (setq ac-dwim t)
   (setq ac-use-menu-map t) ;C-n/C-pで候補選択可能
@@ -366,7 +374,88 @@
 ;;   M-x package-list-packages RET slime
 ;;----------------------------------------------------------
 
+;; slimeで実行するインタプリタをclispに設定
 (when (require 'slime nil t)
   (setq inferior-lisp-program "/usr/local/bin/clisp")
 )
+
+(add-hook 'lisp-mode-hook 'slime-mode)
+
+
+;;----------------------------------------------------------
+;; Scheme
+;;  geiser
+;;   M-x package-list-packages RET geiser
+;;----------------------------------------------------------
+
+(setq geiser-racket-binary "/Applications/Racket6.0.1/bin/racket")
+(setq geiser-active-implementations '(racket))
+
+
+;;----------------------------------------------------------
+;; Ruby
+;;  enh-ruby-mode
+;;   M-x package-list-packages RET enh-ruby-mode
+;;  ruby-end-mode
+;;   M-x pakcage-list-packages RET ruby-end-mode
+;;  inf-ruby
+;;   M-x pakcage-list-packages RET inf-ruby
+;;----------------------------------------------------------
+
+;; enh-ruby-mode
+(autoload 'enh-ruby-mode "enh-ruby-mode" "Major mode for ruby files" t)
+(add-to-list 'auto-mode-alist '("\\.rb$" . enh-ruby-mode))
+(add-to-list 'auto-mode-alist '("Capfile$" . enh-ruby-mode))
+(add-to-list 'auto-mode-alist '("Gemfile$" . enh-ruby-mode))
+(add-to-list 'interpreter-mode-alist '("ruby" . enh-ruby-mode))
+
+(add-hook 'enh-ruby-mode-hook
+          '(lambda ()
+             (setq tab-width 2)
+             (setq ruby-indent-level tab-width)
+             (setq ruby-deep-indent-paren-style nil)
+             (define-key enh-ruby-mode-map [return]
+			   'ruby-reindent-then-newline-and-indent)))
+
+;; ruby-end
+(add-hook 'enh-ruby-mode-hook 'ruby-end-mode)
+
+;; inf-ruby
+(autoload 'inf-ruby "inf-ruby" "Run an inferior ruby process" t)
+(add-hook 'enh-ruby-mode-hook 'inf-ruby-minor-mode)
+
+;; robe-mode
+(add-hook 'enh-ruby-mode-hook
+		  '(lambda ()
+			 (robe-mode)
+			 (robe-ac-setup)
+			 (inf-ruby-keys)))
+
+;;----------------------------------------------------------
+;; smart compile
+;;  M-x package-list-packages RET smart-compile
+;;----------------------------------------------------------
+
+(require 'smart-compile)
+(setq compilation-window-height 15) ;; default window height is 15
+(add-hook 'enh-ruby-mode-hook
+          '(lambda ()
+			 (define-key enh-ruby-mode-map (kbd "C-c c")
+			   'smart-compile)
+			 (define-key enh-ruby-mode-map (kbd "C-c C-c")
+			   (kbd "C-c c C-m"))))
+
+;;----------------------------------------------------------
+;; Markdown
+;;  markdown-mode
+;;   M-x package-list-packages RET markdown-mode
+;;----------------------------------------------------------
+
+(autoload 'markdown-mode "markdown-mode"
+  "Major mode for editing Markdown files" t)
+;(add-to-list 'auto-mode-alist '("\\.text\\'" . markdown-mode))
+(add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode))
+(add-to-list 'auto-mode-alist '("\\.markdown\\'" . markdown-mode))
+
+
 
