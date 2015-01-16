@@ -223,19 +223,20 @@
 ;;;;--------------------------------------------------------
 ;;;; auto complete mode
 ;;;;  ac-dict/js2-mode
-;;;;   wget https://raw.github.com/sandai/dotfiles/master/.emacs.d/ac-dict/js2-mode
+;;;;   curl -L -O https://raw.github.com/sandai/dotfiles/master/.emacs.d/ac-dict/js2-mode
 ;;;;--------------------------------------------------------
+
 (when (require 'auto-complete-config nil t)
+  (add-to-list 'ac-modes 'markdown-mode)
   (add-to-list 'ac-modes 'js2-mode)
   (add-to-list 'ac-modes 'web-mode)
   (add-to-list 'ac-modes 'enh-ruby-mode)
-  (add-to-list 'ac-modes 'markdown-mode)
   (ac-config-default)
   (setq ac-auto-start 4)
   (setq ac-dwim t)
-  (setq ac-use-menu-map t) ;C-n/C-pで候補選択可能
-  (setq ac-comphist-file "~/.emacs.d/local/ac-comphist.dat")) ;補完履歴のキャッシュ先
-
+  (setq ac-use-menu-map t) ;; C-n/C-pで候補選択可能
+  (setq ac-comphist-file "~/.emacs.d/local/ac-comphist.dat") ;; 補完履歴のキャッシュ先
+  (add-to-list 'ac-dictionary-directories "~/.emacs.d/ac-dict")) ;; ユーザー辞書の格納先
 
 ;;;;----------------------------------------------------------
 ;;;; Markdown
