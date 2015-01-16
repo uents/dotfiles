@@ -115,6 +115,8 @@ alias mc2="minicom configuration dfl2"
 alias plantuml="java -jar ${HOME}/opt/plantuml/plantuml.jar"
 alias irb="irb --readline -r irb/completion"
 
-export NODE_PATH=/usr/local/lib/node
-export PATH=$HOME/opt/bin:$PATH
+# github api token to extend api rate limit
+export HOMEBREW_GITHUB_API_TOKEN=95221c521aa1c31987ec75c8118bc55e4a1977a3
 
+# node.js
+#export NODE_PATH=/usr/local/lib/node
