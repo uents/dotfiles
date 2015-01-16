@@ -1,0 +1,55 @@
+;;;; -*- mode: emacs-lisp -*-
+;;;;
+;;;; @flie  ~/.emacs.d/Cask
+;;;; @brief Cask configuration file
+;;;;
+
+;;;;--------------------------------------------------------
+;;;; source
+;;;;--------------------------------------------------------
+(source gnu)
+(source melpa)
+;(source marmalade)
+
+;;;;--------------------------------------------------------
+;;;; packages
+;;;;--------------------------------------------------------
+
+;;; helm
+(depends-on "helm")
+(depends-on "helm-ack")
+(depends-on "helm-c-moccur")
+(depends-on "helm-gtags")
+(depends-on "helm-etags-plus" :git
+			"https://github.com/jixiuf/helm-etags-plus.git")
+
+;;; yasnippet
+(depends-on "yasnippet")
+
+;;; auto complete mode
+(depends-on "auto-complete")
+
+
+;;; Markdown
+(depends-on "markdown-mode")
+
+;;; Textile
+(depends-on "textile-mode")
+
+;;; JavaScript
+(depends-on "js2-mode")
+
+;;; HTML/CSS
+(depends-on "web-mode")
+
+;;; Scheme
+(depends-on "geiser")
+
+;;; Common Lisp
+;(depends-on "slime")
+
+;;; Ruby
+;(depends-on "enh-ruby-mode")
+;(depends-on "ruby-end-mode")
+;(depends-on "inf-ruby")
+;(depends-on "smart-compile")

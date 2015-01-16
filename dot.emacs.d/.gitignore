@@ -1,9 +1,2 @@
-;; ~/.emacs.d/.gitignore
-
-;;elpa/
-;;auto-install/
-;;local/
-url/
-auto-save-list/
-local-legacy/
-init-legacy.el
+.cask
+auto-save-list
