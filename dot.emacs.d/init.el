@@ -108,9 +108,9 @@
 	  ;; (pp (font-family-list)) でfont-familyの出力可能
 	  (set-face-attribute 'default nil
   						  :height 140
-						  :family "Consolas"
+;						  :family "Consolas"
 ;						  :family "Menlo"
-;						  :family "Bitstream Vera Sans Mono"
+						  :family "DejaVu Sans Mono"
 						  )
 	  (set-fontset-font nil 'japanese-jisx0208
 						(font-spec :family "Noto Sans Japanese"))
@@ -330,7 +330,7 @@
 ;;;;--------------------------------------------------------
 
 ;;; geiser
-(setq geiser-racket-binary "/Applications/Racket6.0.1/bin/racket")
+(setq geiser-racket-binary "/opt/homebrew-cask/Caskroom/racket/6.1.1/Racket v6.1.1/bin/racket")
 (setq geiser-active-implementations '(racket))
 
 
