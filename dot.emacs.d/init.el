@@ -1,6 +1,6 @@
 ;;;;
 ;;;; @flie  ~/.emacs.d/init.el
-;;;; @brief GNU Emacs configuration file (ver 24.3 or later)
+;;;; @brief GNU Emacs configuration file (ver 23.3 or later)
 ;;;;
 
 ;;;;--------------------------------------------------------
@@ -95,7 +95,7 @@
 	  ;; ツールバーを非表示
 	  (tool-bar-mode -1)
 	  ;; 行間を指定
-	  (setq-default line-spacing 0)
+	  (setq-default line-spacing 0.1)
 	  ;; タイトル
 	  (setq frame-title-format (concat "%b"))
 	  (setq default-frame-alist
@@ -107,10 +107,7 @@
 	  ;; フォント
 	  ;; (pp (font-family-list)) でfont-familyの出力可能
 	  (set-face-attribute 'default nil
-  						  :height 140
-;						  :family "Consolas"
-;						  :family "Menlo"
-						  :family "DejaVu Sans Mono"
+  						  :height 135 :family "Fira Mono"
 						  )
 	  (set-fontset-font nil 'japanese-jisx0208
 						(font-spec :family "Noto Sans Japanese"))
@@ -230,7 +227,9 @@
   (add-to-list 'ac-modes 'markdown-mode)
   (add-to-list 'ac-modes 'js2-mode)
   (add-to-list 'ac-modes 'web-mode)
-  (add-to-list 'ac-modes 'enh-ruby-mode)
+;  (add-to-list 'ac-modes 'racket-mode)
+;  (add-to-list 'ac-modes 'racket-repl-mode)
+;  (add-to-list 'ac-modes 'enh-ruby-mode)
   (ac-config-default)
   (setq ac-auto-start 4)
   (setq ac-dwim t)
@@ -247,6 +246,9 @@
   "Major mode for editing Markdown files" t)
 (add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode))
 (add-to-list 'auto-mode-alist '("\\.markdown\\'" . markdown-mode))
+(custom-set-variables 
+ '(markdown-command
+   "pandoc -f markdown -t html -s --mathjax --highlight-style pygments"))
 
 ;;;;--------------------------------------------------------
 ;;;; C
@@ -332,7 +334,12 @@
 ;;; geiser
 (setq geiser-racket-binary "/opt/homebrew-cask/Caskroom/racket/6.1.1/Racket v6.1.1/bin/racket")
 (setq geiser-active-implementations '(racket))
+(setq geiser-repl-read-only-prompt-p nil)
 
+;; ;;; racket-mode
+;; (when (require 'racket-mode nil t)
+;;   (add-to-list 'auto-mode-alist '("\\.scm\\'" . racket-mode))
+;;   )
 
 ;;;;----------------------------------------------------------
 ;;;; Ruby

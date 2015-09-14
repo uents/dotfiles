@@ -29,7 +29,6 @@
 ;;; auto complete mode
 (depends-on "auto-complete")
 
-
 ;;; Markdown
 (depends-on "markdown-mode")
 
@@ -44,6 +43,7 @@
 
 ;;; Scheme
 (depends-on "geiser")
+;(depends-on "racket-mode")
 
 ;;; Common Lisp
 ;(depends-on "slime")

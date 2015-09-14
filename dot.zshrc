@@ -69,7 +69,7 @@ setopt magic_equal_subst
 ## ヒストリを呼び出してから実行する間に一旦編集
 setopt hist_verify
 
-# ファイル名の展開で辞書順ではなく数値的にソート
+## ファイル名の展開で辞書順ではなく数値的にソート
 setopt numeric_glob_sort
 
 ## 出力時8ビットを通す
@@ -106,17 +106,25 @@ bindkey -e
 #export XIM_PROGRAM=ibus-daemon
 #export XIM_ARGS="-r --daemonize --xim"
 
+## github api token to extend api rate limit
+export HOMEBREW_GITHUB_API_TOKEN=95221c521aa1c31987ec75c8118bc55e4a1977a3
+
+## rbenv
+eval "$(rbenv init -)"
+
+## rubygems
+export GEM_HOME=$HOME/opt/gems
+export PATH=$GEM_HOME/bin:$PATH
+
+## nodebrew
+export PATH=$HOME/.nodebrew/current/bin:$PATH
+
 ## aliases
 #alias ls="ls -F --color"
 alias ls="ls -F -G"
 alias emacs="TERM=xterm-256color XMODIFIERS=@im=none /usr/local/bin/emacs"
+alias emacs.app="open /usr/local/Cellar/emacs/24.5/Emacs.app &"
 alias mc="minicom configuration dfl"
 alias mc2="minicom configuration dfl2"
 alias plantuml="java -jar ${HOME}/opt/plantuml/plantuml.jar"
-alias irb="irb --readline -r irb/completion"
-
-# github api token to extend api rate limit
-export HOMEBREW_GITHUB_API_TOKEN=95221c521aa1c31987ec75c8118bc55e4a1977a3
-
-# node.js
-#export NODE_PATH=/usr/local/lib/node
+#alias irb="irb --readline -r irb/completion"
