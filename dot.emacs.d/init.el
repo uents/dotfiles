@@ -25,7 +25,7 @@
 (setq inhibit-default-init t)
 
 ;;; 起動メッセージを非表示
-(setq inhibit-startup-screen t)
+;(setq inhibit-startup-screen t)
 
 ;;; バックアップファイルの作成を禁止
 (setq backup-inhibited t)
@@ -88,38 +88,38 @@
 ;;; 長い行は折り返す
 (setq truncate-lines t)
 
-(if window-system
-	(progn
-	  ;; メニューバーを表示
-	  (menu-bar-mode 1)
-	  ;; ツールバーを非表示
-	  (tool-bar-mode -1)
-	  ;; 行間を指定
-	  (setq-default line-spacing 0.1)
-	  ;; タイトル
-	  (setq frame-title-format (concat "%b"))
-	  (setq default-frame-alist
-			'(
-			  ;; ウィジェットのサイズ
-			  (width . 108)
-			  (height . 40)
-			  ))
-	  ;; フォント
-	  ;; (pp (font-family-list)) でfont-familyの出力可能
-	  (set-face-attribute 'default nil
-  						  :height 135 :family "Fira Mono"
-						  )
-	  (set-fontset-font nil 'japanese-jisx0208
-						(font-spec :family "Noto Sans Japanese"))
+;; メニューバーを非表示
+(menu-bar-mode -1)
 
-	  ;; theme
-;	  (load-theme 'dichromacy t)
-;	  (load-theme 'deeper-blue t)
-	)
-    (progn
-	  ;; メニューバーを非表示
-	  (menu-bar-mode -1)
-	))
+(when window-system
+  ;; メニューバーを非表示
+  (menu-bar-mode 1)
+  ;; ツールバーを非表示
+  (tool-bar-mode -1)
+  ;; 行間を指定
+  (setq-default line-spacing 0)
+  ;; タイトル
+  (setq frame-title-format (concat "%b"))
+
+  (setq default-frame-alist
+		'(
+		  ;; ウィジェットのサイズ
+		  (width . 108)
+		  (height . 40)
+		  ))
+  ;; フォント
+  ;; (pp (font-family-list)) でfont-familyの出力可能
+
+  (set-face-attribute 'default nil
+					  :family "Hack" :height 120)
+
+  (set-fontset-font t 'japanese-jisx0208
+					(font-spec :family "Noto Sans Japanese"))
+
+  ;; theme
+;  (load-theme 'dichromacy t)
+;  (load-theme 'deeper-blue t)
+  )
     
 
 ;;;;----------------------------------------------------------
@@ -210,6 +210,7 @@
 ;;;;--------------------------------------------------------
 ;;;; yasnippet
 ;;;;--------------------------------------------------------
+
 (when (require 'yasnippet nil t)
   (setq yas-snippet-dirs
 		'("~/.emacs.d/local/yasnippet/snippets"
@@ -249,6 +250,16 @@
 (custom-set-variables 
  '(markdown-command
    "pandoc -f markdown -t html -s --mathjax --highlight-style pygments"))
+
+
+;;;;----------------------------------------------------------
+;;;; Textile
+;;;;----------------------------------------------------------
+
+;;; textile-mode
+(when (require 'textile-mode nil t)
+  (add-to-list 'auto-mode-alist '("\\.textile\\'" . textile-mode)))
+
 
 ;;;;--------------------------------------------------------
 ;;;; C
