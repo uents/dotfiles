@@ -97,6 +97,9 @@ setopt correct
 bindkey -e
 
 
+## github api token to extend api rate limit
+export HOMEBREW_GITHUB_API_TOKEN=3dda0a5504f4c8b736b63d8d80effb08bb96ddec
+
 ## ibus-mozc
 #mozc_server_start
 #export XIM=ibus
@@ -106,8 +109,8 @@ bindkey -e
 #export XIM_PROGRAM=ibus-daemon
 #export XIM_ARGS="-r --daemonize --xim"
 
-## github api token to extend api rate limit
-export HOMEBREW_GITHUB_API_TOKEN=95221c521aa1c31987ec75c8118bc55e4a1977a3
+## emacs cask
+export PATH=$HOME/.cask/bin:$PATH
 
 ## rbenv
 eval "$(rbenv init -)"
