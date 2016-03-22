@@ -1,6 +1,6 @@
 ;;;;
 ;;;; @flie  ~/.emacs.d/init.el
-;;;; @brief GNU Emacs configuration file (ver 23.3 or later)
+;;;; @brief GNU Emacs configuration file (for version 24.1+)
 ;;;;
 
 ;;;;--------------------------------------------------------
@@ -17,15 +17,17 @@
 (set-buffer-file-coding-system 'utf-8)
 
 ;;; network proxy
-;(setq url-proxy-services
-;	  '(("http" . "example.com:8080")
-;		("no_proxy" . "127.0.0.1")))
+;; (setq url-proxy-services
+;; 	  '(("http" . "example.com:8080")
+;; 		("https" . "example.com:8080")
+;; 		("ftp" . "example.com:8080")
+;; 		("no_proxy" . "127.0.0.1")))
 
 ;;; inhibit loading "default.el" at startup
 (setq inhibit-default-init t)
 
 ;;; 起動メッセージを非表示
-;(setq inhibit-startup-screen t)
+(setq inhibit-startup-screen t)
 
 ;;; バックアップファイルの作成を禁止
 (setq backup-inhibited t)
@@ -50,10 +52,10 @@
 ;;;;--------------------------------------------------------
 
 ;;; mozc
-;; (require 'mozc)
-;; (load-file "/usr/local/share/emacs/23.4/site-lisp/mozc.el")
-;; (setq default-input-method "japanese-mozc")
-;; (global-set-key (kbd "C-\\") 'toggle-input-method)
+;(require 'mozc)
+;(load-file "/usr/local/share/emacs/23.4/site-lisp/mozc.el")
+;(setq default-input-method "japanese-mozc")
+;(global-set-key (kbd "C-\\") 'toggle-input-method)
 
 ;;; anthy
 ;; (add-to-list 'load-path "/usr/share/emacs/site-lisp/anthy")
@@ -75,9 +77,6 @@
 (column-number-mode 1)
 (linum-mode -1)
 
-;;; スクロールバーを非表示
-(scroll-bar-mode -1)
-
 ;;; 対応する括弧を強調表示
 (setq show-paren-delay 0) ;; 0秒(遅延なし)で表示
 (show-paren-mode t)
@@ -96,8 +95,10 @@
   (menu-bar-mode 1)
   ;; ツールバーを非表示
   (tool-bar-mode -1)
+  ;; スクロールバーを非表示
+  (scroll-bar-mode -1)
   ;; 行間を指定
-  (setq-default line-spacing 0)
+;  (setq-default line-spacing 0.1)
   ;; タイトル
   (setq frame-title-format (concat "%b"))
 
@@ -107,60 +108,113 @@
 		  (width . 108)
 		  (height . 40)
 		  ))
+
   ;; フォント
   ;; (pp (font-family-list)) でfont-familyの出力可能
 
   (set-face-attribute 'default nil
-					  :family "Hack" :height 120)
+					  :family "Code New Roman" :height 130)
+;					  :family "Droid Sans Mono" :height 110)
 
   (set-fontset-font t 'japanese-jisx0208
-					(font-spec :family "Noto Sans Japanese"))
+					(font-spec :family "Noto Sans CJK JP Light"))
 
   ;; theme
 ;  (load-theme 'dichromacy t)
 ;  (load-theme 'deeper-blue t)
   )
-    
-
-;;;;----------------------------------------------------------
-;;;; Cask
-;;;;----------------------------------------------------------
-
-;;; Caskをローカルディレクトリにインストールした場合は以下のようにパスを通す
-;;; (require 'cask "~/.cask/cask.el")
-
-(when (require 'cask nil t)
-  (cask-initialize))
 
 
 ;;;;--------------------------------------------------------
-;;;; GDB/GUD
+;;;; package management
 ;;;;--------------------------------------------------------
-(defvar gud-gdb-history (list "gdb --annotate=3 "))
-(setq gdb-many-windows t)
-(setq gdb-use-sparate-io-buffer t)
 
-(add-hook 'gdb-mode-hook
-	  '(lambda ()
-	     (gud-tooltip-mode t) ;; マウスオーバー時に値を表示
-	     (gud-break-main nil)
-	     (gud-run nil)))
+;;; package
+(when (require 'package nil t)
+  (add-to-list 'package-archives '("melpa" . "http://melpa.milkbox.net/packages/") t)
+;  (add-to-list 'package-archives '("marmalade" . "http://marmalade-repo.org/packages/") t)
+  (package-initialize))
+
+;; パッケージを一括取得
+(defvar my/favorite-packages
+  '(
+	use-package
+	helm
+	helm-ack
+	helm-c-moccur
+	helm-gtags
+	yasnippet
+	auto-complete
+	markdown-mode
+	textile-mode
+	js2-mode
+;	web-mode
+;	slime
+	racket-mode
+	geiser
+	))
+
+(defun my/install-favorite-packages (arg)
+  "Install favorite packages."
+  (interactive "p")
+  (package-refresh-contents)
+  (dolist (pkg my/favorite-packages)
+	(unless (package-installed-p pkg)
+	  (package-install pkg)))
+  (message "Finished !!"))
+
+
+;;; use-package
+(unless (require 'use-package nil t)
+  (defmacro use-package (&rest args)))
+
+;;; quelpa
+;(require 'quelpa nil t)
+
+;;; cask
+;(when (require 'cask nil t)
+;  (cask-initialize))
+;; ローカルディレクトリにインストールした場合は以下のようにパスを通す
+; (require 'cask "~/.cask/cask.el")
+
+
+;;;;--------------------------------------------------------
+;;;; whitespace
+;;;;--------------------------------------------------------
+
+(use-package whitespace
+  :config
+  (setq whitespace-style '(face           ; faceで可視化
+						   trailing       ; 行末
+						   tabs           ; タブ
+						   empty          ; 先頭/末尾の空行
+						   space-mark     ; 表示のマッピング
+						   tab-mark
+						   ))
+  (setq whitespace-display-mappings
+		'((tab-mark ?\t [?\u00BB ?\t] [?\\ ?\t])))
+  (global-whitespace-mode 1))
 
 
 ;;;;--------------------------------------------------------
 ;;;; helm
 ;;;;--------------------------------------------------------
-(when (require 'helm-config nil t)
+
+;;; helm
+(use-package helm-config
+  :config
   (helm-mode 1)
   (global-set-key (kbd "C-x b") 'helm-mini)
   (global-set-key (kbd "C-M-z") 'helm-resume)
   ;; helm-find-filesの自動補完を無効にしTABで手動補完する
   (custom-set-variables '(helm-ff-auto-update-initial-value nil))
-  (define-key helm-c-read-file-map (kbd "TAB") 'helm-execute-persistent-action)
-  (define-key helm-c-read-file-map (kbd "C-h") 'delete-backward-char))
+  (define-key helm-read-file-map (kbd "TAB") 'helm-execute-persistent-action)
+  ;; C-hでの文字消去を有効にする
+  (define-key helm-read-file-map (kbd "C-h") 'delete-backward-char))
 
 ;;; helm-ack
-(when (require 'helm-ack nil t)
+(use-package helm-ack
+  :config
   (setq helm-c-ack-version 2)
   ;; does not insert '--type' option
   (setq helm-c-ack-auto-set-filetype nil)
@@ -170,7 +224,8 @@
   (global-set-key (kbd "C-x g") 'helm-ack))
 
 ;;; helm-c-moccur
-(when (require 'helm-c-moccur nil t)
+(use-package helm-c-moccur
+  :config
   (setq helm-c-moccur-helm-idle-delay 0.1)
   ;; `helm-c-moccur-dmoccur などのコマンドでバッファの情報をハイライトする
   (setq helm-c-moccur-higligt-info-line-flag t)
@@ -190,7 +245,9 @@
 )
 
 ;;; helm-gtags
-(when (require 'helm-gtags nil t)
+(use-package helm-gtags
+  :commands (c-mode)
+  :config
   (add-hook 'helm-gtags-mode-hook
 			'(lambda ()
 			   (setq helm-gtags-ignore-case t)
@@ -202,34 +259,39 @@
 			   (local-set-key (kbd "C-c C-f") 'helm-gtags-find-files))))
 
 ;;; helm-etags-plus
-(when (require 'helm-etags+ nil t)
-  (global-set-key (kbd "M-.") 'helm-etags+-select)
-  (global-set-key (kbd "M-*") 'helm-etags+-history-go-back))
+;; (use-package helm-etags+
+;;   :commands (js2-mode)
+;;   :config
+;;   (global-set-key (kbd "M-.") 'helm-etags+-select)
+;;   (global-set-key (kbd "M-*") 'helm-etags+-history-go-back))
 
 
 ;;;;--------------------------------------------------------
 ;;;; yasnippet
 ;;;;--------------------------------------------------------
 
-(when (require 'yasnippet nil t)
+(use-package yasnippet
+  :commands (c-mode js2-mode)
+  :config
   (setq yas-snippet-dirs
-		'("~/.emacs.d/local/yasnippet/snippets"
-;		  "~/.emacs.d/local/yasnippet/extras/imported"
+		'("~/.emacs.d/snippets"
+;		  "~/.emacs.d/etc/yasnippet/extras/imported"
 		  ))
   (yas-global-mode 1))
 
+
 ;;;;--------------------------------------------------------
-;;;; auto complete mode
+;;;; auto complete
 ;;;;  ac-dict/js2-mode
 ;;;;   curl -L -O https://raw.github.com/sandai/dotfiles/master/.emacs.d/ac-dict/js2-mode
 ;;;;--------------------------------------------------------
 
-(when (require 'auto-complete-config nil t)
+(use-package auto-complete-config
+  :config
   (add-to-list 'ac-modes 'markdown-mode)
   (add-to-list 'ac-modes 'js2-mode)
-  (add-to-list 'ac-modes 'web-mode)
-;  (add-to-list 'ac-modes 'racket-mode)
-;  (add-to-list 'ac-modes 'racket-repl-mode)
+;  (add-to-list 'ac-modes 'web-mode)
+  (add-to-list 'ac-modes 'racket-mode)
 ;  (add-to-list 'ac-modes 'enh-ruby-mode)
   (ac-config-default)
   (setq ac-auto-start 4)
@@ -238,18 +300,19 @@
   (setq ac-comphist-file "~/.emacs.d/local/ac-comphist.dat") ;; 補完履歴のキャッシュ先
   (add-to-list 'ac-dictionary-directories "~/.emacs.d/ac-dict")) ;; ユーザー辞書の格納先
 
+
 ;;;;----------------------------------------------------------
 ;;;; Markdown
 ;;;;----------------------------------------------------------
 
 ;;; markdown-mode
-(autoload 'markdown-mode "markdown-mode"
-  "Major mode for editing Markdown files" t)
-(add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode))
-(add-to-list 'auto-mode-alist '("\\.markdown\\'" . markdown-mode))
-(custom-set-variables 
- '(markdown-command
-   "pandoc -f markdown -t html -s --mathjax --highlight-style pygments"))
+(use-package markdown-mode
+  :mode (("\\.md\\'" . markdown-mode)
+		 ("\\.markdown\\'" . markdown-mode))
+  :config
+  (custom-set-variables
+   '(markdown-command
+	 "pandoc -f markdown -t html -s --mathjax --highlight-style pygments")))
 
 
 ;;;;----------------------------------------------------------
@@ -257,9 +320,25 @@
 ;;;;----------------------------------------------------------
 
 ;;; textile-mode
-(when (require 'textile-mode nil t)
-  (add-to-list 'auto-mode-alist '("\\.textile\\'" . textile-mode)))
+(use-package textile-mode
+  :mode (("\\.textile\\'" . textile-mode))
+  :config
+  )
 
+
+;;;;--------------------------------------------------------
+;;;; GDB/GUD
+;;;;--------------------------------------------------------
+
+(defvar gud-gdb-history (list "gdb --annotate=3 "))
+(setq gdb-many-windows t)
+(setq gdb-use-sparate-io-buffer t)
+
+(add-hook 'gdb-mode-hook
+	  '(lambda ()
+	     (gud-tooltip-mode t) ;; マウスオーバー時に値を表示
+	     (gud-break-main nil)
+	     (gud-run nil)))
 
 ;;;;--------------------------------------------------------
 ;;;; C
@@ -289,16 +368,19 @@
 ;;;;--------------------------------------------------------
 
 ;;; js2-mode
-(when (require 'js2-mode nil t)
-  (add-to-list 'auto-mode-alist '("\\.js$" . js2-mode)))
+(use-package js2-mode
+  :mode (("\\.js\\'" . js2-mode))
+  :config
+  )
 
 ;;;;--------------------------------------------------------
 ;;;; HTML/CSS
 ;;;;--------------------------------------------------------
 
 ;;; web-mode
-(when (require 'web-mode nil t)
-  (add-to-list 'auto-mode-alist '("\\.html$" . web-mode))
+(use-package web-mode
+  :mode (("\\.html\\'" . web-mode))
+  :config
   (add-hook 'web-mode-hook
 		(lambda()
 		  ;; indent offset
@@ -333,24 +415,34 @@
 ;;;;--------------------------------------------------------
 
 ;;; slime
-(when (require 'slime nil t)
-  ;; slimeで実行するインタプリタを設定
-  (setq inferior-lisp-program "/usr/local/bin/clisp")
-  (add-hook 'lisp-mode-hook 'slime-mode))
+;(use-package slime
+;  :config
+;  ;; slimeで実行するインタプリタを設定
+;  (setq inferior-lisp-program "/usr/local/bin/clisp")
+;  (add-hook 'lisp-mode-hook 'slime-mode))
 
 ;;;;--------------------------------------------------------
 ;;;; Scheme
 ;;;;--------------------------------------------------------
 
-;;; geiser
-(setq geiser-racket-binary "/opt/homebrew-cask/Caskroom/racket/6.1.1/Racket v6.1.1/bin/racket")
-(setq geiser-active-implementations '(racket))
-(setq geiser-repl-read-only-prompt-p nil)
+;;; racket-mode
+(use-package racket-mode
+  :mode (("\\.scm\\'" . racket-mode))
+  :config
+  (add-hook 'before-save-hook
+			(lambda () (tabify (point-min) (point-max)))))
 
-;; ;;; racket-mode
-;; (when (require 'racket-mode nil t)
-;;   (add-to-list 'auto-mode-alist '("\\.scm\\'" . racket-mode))
-;;   )
+;;; geiser
+;(use-package geiser
+;  :mode (("\\.scm\\'" . scheme-mode))
+;  :config
+;  (setq geiser-racket-binary
+;		"/opt/homebrew-cask/Caskroom/racket/6.1.1/Racket v6.1.1/bin/racket")
+;  (setq geiser-active-implementations '(racket))
+;  (setq geiser-repl-read-only-prompt-p nil)
+;  (add-hook 'scheme-mode-hook 'geiser-mode)
+;  )
+
 
 ;;;;----------------------------------------------------------
 ;;;; Ruby
@@ -394,4 +486,3 @@
 ;; 			   'smart-compile)
 ;; 			 (define-key enh-ruby-mode-map (kbd "C-c C-c")
 ;; 			   (kbd "C-c c C-m"))))
-
