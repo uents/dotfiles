@@ -105,15 +105,6 @@ bindkey -e
 #export XIM_PROGRAM=ibus-daemon
 #export XIM_ARGS="-r --daemonize --xim"
 
-## anyenv
-if [ -e $HOME/.anyenv/bin ]; then
-    export PATH="$HOME/.anyenv/bin:$PATH"
-    eval "$(anyenv init -)"
-fi
-
-## emacs cask
-#export PATH=$HOME/.cask/bin:$PATH
-
 ## aliases
 #alias ls="ls -F --color"
 alias ls="ls -F -G"
