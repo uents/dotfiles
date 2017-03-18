@@ -105,26 +105,20 @@ bindkey -e
 #export XIM_PROGRAM=ibus-daemon
 #export XIM_ARGS="-r --daemonize --xim"
 
+## anyenv
+if [ -e $HOME/.anyenv/bin ]; then
+    export PATH="$HOME/.anyenv/bin:$PATH"
+    eval "$(anyenv init -)"
+fi
+
 ## emacs cask
 #export PATH=$HOME/.cask/bin:$PATH
-
-## rbenv
-eval "$(rbenv init -)"
-
-## rubygems
-export GEM_HOME=$HOME/opt/gems
-export PATH=$GEM_HOME/bin:$PATH
-
-## nodebrew
-export PATH=$HOME/.nodebrew/current/bin:$PATH
 
 ## aliases
 #alias ls="ls -F --color"
 alias ls="ls -F -G"
-alias emacs="TERM=xterm-256color XMODIFIERS=@im=none /usr/local/bin/emacs"
-alias emacs.app="open /usr/local/Cellar/emacs/24.5/Emacs.app"
-alias mc="minicom configuration dfl"
-alias mc2="minicom configuration dfl2"
-alias plantuml="java -jar ${HOME}/opt/plantuml/plantuml.jar"
+alias emacs="TERM=xterm-256color XMODIFIERS=@im=none emacs"
+alias emacs.app="open /Applicatoins/Emacs.app"
 alias drracket="open /opt/homebrew-cask/Caskroom/racket/6.1.1/Racket\ v6.1.1/DrRacket.app"
+#alias plantuml="java -jar ${HOME}/opt/plantuml/plantuml.jar"
 #alias irb="irb --readline -r irb/completion"
